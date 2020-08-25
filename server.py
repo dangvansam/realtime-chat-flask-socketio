@@ -29,4 +29,5 @@ def handle_client_request(data):
     #print(requests.sid)
     socketio.emit('server_to_client', {'username':data['username'], 'text': data['text']}, broadcast=True)
 
-socketio.run(app, debug=True)
+if __name__ == "__main__":
+        socketio.run(app, debug=True)
