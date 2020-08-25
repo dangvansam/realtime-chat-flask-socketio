@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>realtime chat</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js" integrity="sha512-v8ng/uGxkge3d1IJuEo6dJP8JViyvms0cly9pnbfRxT6/31c3dRWxIiwGnMSWwZjHKOuY3EVmijs7k1jz/9bLA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="static/style.css">
+
+</head>
+<body>
+    <div class="main">
+        <h2 id="title">flask socket-io realtime chat</h2>
+        <h5 id="username"></h5>
+      </div>
+    <div class="messaging">
+     <div class="inbox_msg">
+          <!-- <div class="inbox_people">
+            <div class="headind_srch">
+              <div class="recent_heading">
+                <h4 id="num_client"></h4>
+              </div>
+            </div>
+            <div class="inbox_chat scroll">
+              <div class="chat_list active_chat">
+                <div class="chat_people">
+                  <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                  <div class="chat_ib">
+                    <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                    <p>Test, which is a new approach to have all solutions 
+                      astrology under one roof.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="chat_list">
+                <div class="chat_people">
+                  <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div>
+                  <div class="chat_ib">
+                    <h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+                    <p>Test, which is a new approach to have all solutions 
+                      astrology under one roof.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div> -->
+
+          <div class="mesgs">
+            <div class="msg_history">
+              <!-- tin nhan den
+              <div class="incoming_msg">
+                <div class="received_msg">
+                  <div class="received_withd_msg">
+                    <span id="date1" class="time_date"> 11:01 AM    |    June 9</span>
+                    <p id="text1">Test which is a new approach to have all solutions</p>
+                    </div>
+                </div>
+              </div>
+               tin nhan di
+              <div class="outgoing_msg">
+                <div class="sent_msg">
+                  <span id="date2" class="time_date"> 11:01 AM    |    June 9</span> 
+                  <p id="text2">Test</p>
+                  </div>
+              </div> -->
+            </div>
+
+            <!-- viet tin nhan -->
+            <div class="type_msg">
+              <div class="input_msg_write">
+                <form id="form" action="" method="POST">
+                  <input type="text" class="write_msg" placeholder="Type a message" />
+                  <button class="msg_send_btn" type="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      
+  </body>
+<div id="cre">
+  <h5>python flask + socketio</h5>
+  <h5>by sam</h5>
+  github: <a href="https://github.com/dangvansam98">dangvansam98</a>
+</div>
+<script>
+    var username = prompt("Enter your name:")
+    $('#username').html('Hi: '+username)
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('connect', function(){
+
+      socket.emit('client_to_server',{'username': username, 'text':'connected!'})
+
+      var form = $('#form').on('submit', function(e) {
+          e.preventDefault()
+          let message = $( 'input.write_msg' ).val()
+          socket.emit('client_to_server', {'username':username,'text':message})
+          $( 'input.write_msg' ).val('').focus()
+        } )
+
+      socket.on('server_to_client', function(data){
+        //$('#text1').text(data.text)
+        if( typeof data.username !== 'undefined' ) {
+          console.log(data.username, username)
+          if (data.username == username && data.text != 'connected!'){
+            $('div.msg_history').append('<div class="outgoing_msg"> <div class="sent_msg"> <span id="date2" class="time_date">Me<p id="text2">'+data.text+'</p> </div> </div>')
+          }
+          else{
+            $('div.msg_history').append('<div class="incoming_msg"> <div class="received_msg"> <div class="received_withd_msg"> <span id="date1" class="time_date">' + data.username + '</span> <p id="text1">' + data.text + '</p> </div> </div> </div>')
+          }
+        }
+      })
+    })
+      
+
+
+</script>
+</html>
